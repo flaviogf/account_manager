@@ -68,11 +68,49 @@ class TestIndex:
 
         response = client.get('/accounts')
 
-        accounts = response.json['data']
+        data = response.json['data']
 
-        assert 1 == len(accounts)
-        assert account.uid == accounts[0]['uid']
-        assert account.name == accounts[0]['name']
-        assert account.login == accounts[0]['login']
-        assert account.password == accounts[0]['password']
-        assert account.user == accounts[0]['user']
+        assert 1 == len(data)
+        assert account.uid == data[0]['uid']
+        assert account.name == data[0]['name']
+        assert account.login == data[0]['login']
+        assert account.password == data[0]['password']
+        assert account.user == data[0]['user']
+
+
+class TestShow:
+    def test_return_status_200_when_account_exist(self, client):
+        user = guid()
+
+        account = Account(uid=guid(),
+                          name='GITHUB',
+                          login='flavio.fernandes6@gmail.com',
+                          password='test123',
+                          user=user)
+
+        account.save()
+
+        response = client.get(f'/accounts/{account.uid}')
+
+        assert 200 == response.status_code
+
+    def test_should_return_a_account_when_account_exist(self, client):
+        user = guid()
+
+        account = Account(uid=guid(),
+                          name='GITHUB',
+                          login='flavio.fernandes6@gmail.com',
+                          password='test123',
+                          user=user)
+
+        account.save()
+
+        response = client.get(f'/accounts/{account.uid}')
+
+        data = response.json['data']
+
+        assert account.uid == data['uid']
+        assert account.name == data['name']
+        assert account.login == data['login']
+        assert account.password == data['password']
+        assert account.user == data['user']

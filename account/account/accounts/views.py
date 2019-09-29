@@ -26,3 +26,10 @@ def index():
     accounts = [account.to_dict() for account in Account.objects]
 
     return jsonify({'data': accounts,  'errors': []}), 200
+
+
+@blueprint.route('<string:uid>', methods=['GET'])
+def show(uid):
+    account = Account.objects(uid=uid).first()
+
+    return jsonify({'data': account.to_dict(), 'errors': []}), 200
