@@ -1,5 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, jsonify, request
 
+from account.lib import guid
 from account.models import Account
 
 blueprint = Blueprint('accounts', __name__, url_prefix='/accounts')
@@ -9,10 +10,19 @@ blueprint = Blueprint('accounts', __name__, url_prefix='/accounts')
 def store():
     body = request.json
 
-    account = Account(name=body['name'],
+    account = Account(uid=guid(),
+                      name=body['name'],
                       login=body['login'],
-                      password=body['password'])
+                      password=body['password'],
+                      user=body['user'])
 
     account.save()
 
-    return '', 201
+    return jsonify({'data': account.uid, 'errors': []}), 201
+
+
+@blueprint.route('', methods=['GET'])
+def index():
+    accounts = [account.to_dict() for account in Account.objects]
+
+    return jsonify({'data': accounts,  'errors': []}), 200
