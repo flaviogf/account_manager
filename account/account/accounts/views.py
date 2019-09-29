@@ -46,3 +46,12 @@ def edit(uid):
                    password=body['password'])
 
     return jsonify({'data': account.uid, 'errors': []}), 200
+
+
+@blueprint.route('<string:uid>', methods=['DELETE'])
+def destroy(uid):
+    account = Account.objects(uid=uid).first()
+
+    account.delete()
+
+    return jsonify({'data': None, 'errors': []}), 200

@@ -162,3 +162,35 @@ class TestEdit:
         assert account.name == 'MICROSOFT'
         assert account.login == 'flaviogf6@outlook.com'
         assert account.password == '123test'
+
+
+class TestDestroy:
+    def test_should_return_status_200_when_destroy_a_account(self, client):
+        user = guid()
+
+        account = Account(uid=guid(),
+                          name='GITHUB',
+                          login='flavio.fernandes6@gmail.com',
+                          password='test123',
+                          user=user)
+
+        account.save()
+
+        response = client.delete(f'/accounts/{account.uid}')
+
+        assert 200 == response.status_code
+
+    def test_should_delete_account_on_database_when_destroy_a_account(self, client):
+        user = guid()
+
+        account = Account(uid=guid(),
+                          name='GITHUB',
+                          login='flavio.fernandes6@gmail.com',
+                          password='test123',
+                          user=user)
+
+        account.save()
+
+        client.delete(f'/accounts/{account.uid}')
+
+        assert 0 == len(Account.objects)
