@@ -114,3 +114,51 @@ class TestShow:
         assert account.login == data['login']
         assert account.password == data['password']
         assert account.user == data['user']
+
+
+class TestEdit:
+    def test_should_return_status_200_when_edit_account(self, client):
+        user = guid()
+
+        account = Account(uid=guid(),
+                          name='GITHUB',
+                          login='flavio.fernandes6@gmail.com',
+                          password='test123',
+                          user=user)
+
+        account.save()
+
+        data = {
+            'name': 'MICROSOFT',
+            'login': 'flaviogf6@outlook.com',
+            'password': '123test'
+        }
+
+        response = client.put(f'/accounts/{account.uid}', json=data)
+
+        assert 200 == response.status_code
+
+    def test_should_update_database_when_edit_a_account(self, client):
+        user = guid()
+
+        account = Account(uid=guid(),
+                          name='GITHUB',
+                          login='flavio.fernandes6@gmail.com',
+                          password='test123',
+                          user=user)
+
+        account.save()
+
+        data = {
+            'name': 'MICROSOFT',
+            'login': 'flaviogf6@outlook.com',
+            'password': '123test'
+        }
+
+        client.put(f'/accounts/{account.uid}', json=data)
+
+        account.reload()
+
+        assert account.name == 'MICROSOFT'
+        assert account.login == 'flaviogf6@outlook.com'
+        assert account.password == '123test'

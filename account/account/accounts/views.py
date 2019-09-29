@@ -33,3 +33,16 @@ def show(uid):
     account = Account.objects(uid=uid).first()
 
     return jsonify({'data': account.to_dict(), 'errors': []}), 200
+
+
+@blueprint.route('<string:uid>', methods=['PUT'])
+def edit(uid):
+    account = Account.objects(uid=uid).first()
+
+    body = request.json
+
+    account.update(name=body['name'],
+                   login=body['login'],
+                   password=body['password'])
+
+    return jsonify({'data': account.uid, 'errors': []}), 200
