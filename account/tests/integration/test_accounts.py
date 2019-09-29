@@ -1,30 +1,24 @@
-from account.lib import guid
 from account.models import Account
+from account.utils import guid
 
 
 class TestStore:
-    def test_should_return_status_201_when_account_is_created(self, client):
-        user = guid()
-
+    def test_should_return_status_201_when_account_is_created(self, client, authorize):
         data = {
             'name': 'GITHUB',
             'login': 'flavio.fernandes6@gmail.com',
             'password': 'test123',
-            'user': user
         }
 
         response = client.post('/accounts', json=data)
 
         assert 201 == response.status_code
 
-    def test_should_add_account_on_database_when_account_is_created(self, client):
-        user = guid()
-
+    def test_should_add_account_on_database_when_account_is_created(self, client, authorize, user):
         data = {
             'name': 'GITHUB',
             'login': 'flavio.fernandes6@gmail.com',
             'password': 'test123',
-            'user': user
         }
 
         client.post('/accounts', json=data)
@@ -36,18 +30,16 @@ class TestStore:
         assert 'GITHUB' == account.name
         assert 'flavio.fernandes6@gmail.com' == account.login
         assert 'test123' == account.password
-        assert user == account.user
+        assert user['sub'] == account.user
 
 
 class TestIndex:
-    def test_should_return_status_200(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_should_return_status_200(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 
@@ -55,14 +47,12 @@ class TestIndex:
 
         assert 200 == response.status_code
 
-    def test_should_return_a_list_of_accounts(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_should_return_a_list_of_accounts(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 
@@ -79,14 +69,12 @@ class TestIndex:
 
 
 class TestShow:
-    def test_return_status_200_when_account_exist(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_return_status_200_when_account_exist(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 
@@ -94,14 +82,12 @@ class TestShow:
 
         assert 200 == response.status_code
 
-    def test_should_return_a_account_when_account_exist(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_should_return_a_account_when_account_exist(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 
@@ -117,14 +103,12 @@ class TestShow:
 
 
 class TestEdit:
-    def test_should_return_status_200_when_edit_account(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_should_return_status_200_when_edit_account(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 
@@ -138,14 +122,12 @@ class TestEdit:
 
         assert 200 == response.status_code
 
-    def test_should_update_database_when_edit_a_account(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_should_update_database_when_edit_a_account(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 
@@ -165,14 +147,12 @@ class TestEdit:
 
 
 class TestDestroy:
-    def test_should_return_status_200_when_destroy_a_account(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_should_return_status_200_when_destroy_a_account(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 
@@ -180,14 +160,12 @@ class TestDestroy:
 
         assert 200 == response.status_code
 
-    def test_should_delete_account_on_database_when_destroy_a_account(self, client):
-        user = guid()
-
-        account = Account(uid=guid(),
+    def test_should_delete_account_on_database_when_destroy_a_account(self, client, authorize, user):
+        account = Account(uid=guid.new_guid(),
                           name='GITHUB',
                           login='flavio.fernandes6@gmail.com',
                           password='test123',
-                          user=user)
+                          user=user['sub'])
 
         account.save()
 

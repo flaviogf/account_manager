@@ -1,7 +1,8 @@
 import pytest
 
 from account import create_app
-from account.extensions import db
+from account.database import db
+from account.utils import guid
 
 
 @pytest.fixture
@@ -19,3 +20,15 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture
+def user(app):
+    return dict(sub=guid.new_guid())
+
+
+@pytest.fixture()
+def authorize(app, requests_mock, user):
+    url = app.config.get('IDENTITY_URL')
+    url = f'{url}/decode'
+    requests_mock.post(url, status_code=200, json=dict(data=user))

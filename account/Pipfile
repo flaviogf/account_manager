@@ -8,10 +8,13 @@ pylama = "*"
 isort = "*"
 autopep8 = "*"
 pytest = "*"
+requests-mock = "*"
 
 [packages]
 flask = "*"
 flask-mongoengine = "*"
+requests = "*"
+dynaconf = "*"
 
 [requires]
 python_version = "3.7"

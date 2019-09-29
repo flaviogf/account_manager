@@ -6,8 +6,11 @@ def create_app(config):
 
     app.config.from_object(config)
 
-    from account.extensions import db
+    from account.database import db
     db.init_app(app)
+
+    from account.services import identity
+    identity.init_app(app)
 
     from account import accounts
     app.register_blueprint(accounts.views.blueprint)

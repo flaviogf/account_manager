@@ -1,4 +1,4 @@
-from account.extensions import db
+from account.database import db
 
 
 class Account(db.Document):
