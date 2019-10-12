@@ -9,7 +9,7 @@ const chance = require('chance').Chance()
 trait('DatabaseTransactions')
 trait('Test/ApiClient')
 
-test('should return status 200 when user is authenticated', async ({
+test('store -> should return status 200 when user is authenticated', async ({
   client
 }) => {
   const password = chance.word()
@@ -34,7 +34,7 @@ test('should return status 200 when user is authenticated', async ({
   response.assertStatus(200)
 })
 
-test('should return a token when user is authenticated', async ({
+test('store -> should return a token when user is authenticated', async ({
   assert,
   client
 }) => {
@@ -60,7 +60,7 @@ test('should return a token when user is authenticated', async ({
   assert.isOk(response.body.data)
 })
 
-test('should return status 401 when user not is authenticated', async ({
+test('store -> should return status 401 when user not is authenticated', async ({
   client
 }) => {
   const password = chance.word()

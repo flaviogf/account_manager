@@ -9,7 +9,9 @@ const chance = require('chance').Chance()
 trait('DatabaseTransactions')
 trait('Test/ApiClient')
 
-test('should return status 201 when user is created', async ({ client }) => {
+test('store -> should return status 201 when user is created', async ({
+  client
+}) => {
   const data = {
     name: chance.name(),
     email: chance.email(),
@@ -25,7 +27,7 @@ test('should return status 201 when user is created', async ({ client }) => {
   response.assertStatus(201)
 })
 
-test('should update database when user is created', async ({
+test('store -> should update database when user is created', async ({
   assert,
   client
 }) => {
@@ -46,7 +48,7 @@ test('should update database when user is created', async ({
   assert.equal(1, count)
 })
 
-test('should return status 400 when email already in use', async ({
+test('store -> should return status 400 when email already in use', async ({
   client
 }) => {
   const user = await User.create({
@@ -71,7 +73,7 @@ test('should return status 400 when email already in use', async ({
   response.assertStatus(400)
 })
 
-test('should return status 400 when username already in use', async ({
+test('store -> should return status 400 when username already in use', async ({
   client
 }) => {
   const user = await User.create({
