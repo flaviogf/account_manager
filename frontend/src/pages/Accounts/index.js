@@ -1,17 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import {
-  Container,
-  Form,
-  FormHeader,
-  FormContent,
-  FormFooter,
-  Title,
-  Label,
-  Input,
-  Button
-} from './styles'
+import { Container } from './styles'
+
+import Form from './Form'
+import List from './List'
 
 import api from '../../services/api'
 import session from '../../services/session'
@@ -20,6 +13,23 @@ function Accounts() {
   const [name, setName] = useState('')
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
+  const [accounts, setAccounts] = useState([])
+
+  useEffect(() => {
+    function getToken() {
+      return session.getBearerToken()
+    }
+
+    function loadAccounts(authorization) {
+      return api.get('/account', { headers: { authorization } })
+    }
+
+    getToken()
+      .then(loadAccounts)
+      .then((res) => res.data)
+      .then(setAccounts)
+      .catch(() => toast.error('Unable to load accounts.'))
+  }, [])
 
   function onSubmit(e) {
     e.preventDefault()
@@ -29,56 +39,36 @@ function Accounts() {
     }
 
     function storeAccount(authorization) {
-      return api.post(
-        '/account',
-        { name, login, password },
-        { headers: { authorization } }
-      )
+      const account = { name, login, password }
+
+      return api
+        .post('/account', account, { headers: { authorization } })
+        .then((res) => res.data)
+        .then((id) => [{ ...account, id }, ...accounts])
     }
 
     getToken()
       .then(storeAccount)
+      .then(setAccounts)
+      .then(() => setPassword(''))
+      .then(() => setLogin(''))
+      .then(() => setName(''))
       .then(() => toast.success('Successfully created account'))
       .catch(() => toast.error('Unable to create account.'))
   }
 
   return (
     <Container>
-      <Form onSubmit={onSubmit}>
-        <FormHeader>
-          <Title>Add new account</Title>
-        </FormHeader>
-
-        <FormContent>
-          <Label>Name</Label>
-          <Input
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter name"
-            value={name}
-            type="text"
-          />
-
-          <Label>Login</Label>
-          <Input
-            onChange={(e) => setLogin(e.target.value)}
-            placeholder="Enter login"
-            value={login}
-            type="text"
-          />
-
-          <Label>Password</Label>
-          <Input
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-            value={password}
-            type="password"
-          />
-        </FormContent>
-
-        <FormFooter>
-          <Button type="submit">Save account</Button>
-        </FormFooter>
-      </Form>
+      <Form
+        onSubmit={onSubmit}
+        setPassword={setPassword}
+        setLogin={setLogin}
+        setName={setName}
+        password={password}
+        login={login}
+        name={name}
+      />
+      <List accounts={accounts} setAccounts={setAccounts} />
     </Container>
   )
 }

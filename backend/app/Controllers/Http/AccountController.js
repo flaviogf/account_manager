@@ -22,7 +22,10 @@ class AccountController {
 
     const { page, perPage } = request.get()
 
-    const paginationOfAccounts = await user.accounts().paginate(page, perPage)
+    const paginationOfAccounts = await user
+      .accounts()
+      .orderBy('created_at', 'desc')
+      .paginate(page, perPage)
 
     return response.ok(paginationOfAccounts)
   }
