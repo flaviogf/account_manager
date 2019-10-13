@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { toast } from 'react-toastify'
 
 import {
   Container,
+  Links,
   Form,
   FormContent,
   FormFooter,
@@ -11,26 +15,64 @@ import {
   Button
 } from './styles'
 
-function Login() {
+import api from '../../services/api'
+import session from '../../services/session'
+
+function Login({ history }) {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  function onSubmit(e) {
+    e.preventDefault()
+
+    api
+      .post('/session', { username, password })
+      .then((res) => res.data)
+      .then(session.setToken)
+      .then(() => history.push('/accounts'))
+      .catch(() => toast.error('Invalid username or password.'))
+  }
+
   return (
     <Container>
-      <Form>
+      <Links>
+        <Link to="/">Sign In</Link>
+        <Link to="/register">Register</Link>
+      </Links>
+
+      <Form onSubmit={onSubmit}>
         <FormContent>
           <Title>Sign in to start</Title>
 
           <Label>Username</Label>
-          <Input placeholder="Enter username" />
+          <Input
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter username"
+            value={username}
+            type="text"
+          />
 
-          <Label>Username</Label>
-          <Input placeholder="Enter password" />
+          <Label>Password</Label>
+          <Input
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password"
+            value={password}
+            type="password"
+          />
         </FormContent>
 
         <FormFooter>
-          <Button>Sign In</Button>
+          <Button type="submit">Sign In</Button>
         </FormFooter>
       </Form>
     </Container>
   )
+}
+
+Login.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired
 }
 
 export default Login
