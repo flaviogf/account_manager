@@ -6,6 +6,9 @@ const session = {
   getBearerToken() {
     const token = localStorage.getItem('@token')
     return Promise.resolve(`Bearer ${token}`)
+  },
+  isAuthenticated() {
+    return !!localStorage.getItem('@token')
   }
 }
 
