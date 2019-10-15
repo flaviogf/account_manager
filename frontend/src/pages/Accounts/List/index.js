@@ -1,9 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { Container, Header, Input, Table, Button } from './styles'
+import {
+  Container,
+  Header,
+  Input,
+  Table,
+  ActionButton,
+  Footer,
+  LoadMoreButton
+} from './styles'
 
-function List({ accounts }) {
+function List({ accounts, page, setPage }) {
   return (
     <Container>
       <Header>
@@ -25,18 +33,24 @@ function List({ accounts }) {
               <td>{it.name}</td>
               <td>{it.login}</td>
               <td>
-                <Button type="button">Edit</Button>
-                <Button type="button" danger>
+                <ActionButton type="button">Edit</ActionButton>
+                <ActionButton type="button" danger>
                   Delete
-                </Button>
-                <Button type="button" info>
+                </ActionButton>
+                <ActionButton type="button" info>
                   Copy
-                </Button>
+                </ActionButton>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      <Footer>
+        <LoadMoreButton onClick={() => setPage(page + 1)}>
+          Load more..
+        </LoadMoreButton>
+      </Footer>
     </Container>
   )
 }
@@ -48,7 +62,9 @@ List.propTypes = {
       name: PropTypes.string.isRequired,
       login: PropTypes.string.isRequired
     })
-  ).isRequired
+  ).isRequired,
+  page: PropTypes.number.isRequired,
+  setPage: PropTypes.func.isRequired
 }
 
 export default List

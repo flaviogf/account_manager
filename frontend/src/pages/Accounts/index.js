@@ -14,6 +14,7 @@ function Accounts() {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [accounts, setAccounts] = useState([])
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     function getToken() {
@@ -30,6 +31,22 @@ function Accounts() {
       .then(setAccounts)
       .catch(() => toast.error('Unable to load accounts.'))
   }, [])
+
+  useEffect(() => {
+    function getToken() {
+      return session.getBearerToken()
+    }
+
+    function loadAccounts(authorization) {
+      return api.get(`/account?page=${page}`, { headers: { authorization } })
+    }
+
+    getToken()
+      .then(loadAccounts)
+      .then((res) => res.data)
+      .then((moreAccounts) => setAccounts([...accounts, ...moreAccounts]))
+      .catch(() => toast.error('Unable to load accounts.'))
+  }, [page])
 
   function onSubmit(e) {
     e.preventDefault()
@@ -68,7 +85,12 @@ function Accounts() {
         login={login}
         name={name}
       />
-      <List accounts={accounts} setAccounts={setAccounts} />
+      <List
+        setAccounts={setAccounts}
+        accounts={accounts}
+        setPage={setPage}
+        page={page}
+      />
     </Container>
   )
 }

@@ -56,7 +56,7 @@ export const Table = styled.table`
   }
 `
 
-export const Button = styled.button`
+export const ActionButton = styled.button`
   background-color: ${(props) => {
     if (props.danger) {
       return '#ba4155'
@@ -79,4 +79,31 @@ export const Button = styled.button`
   &:last-child {
     margin-right: 0px;
   }
+`
+
+export const Footer = styled.div`
+  background-color: #3b264c;
+  position: relative;
+  padding: 16px;
+
+  &::before {
+    background-color: rgba(200, 169, 255, 0.2);
+    position: absolute;
+    width: 100%;
+    content: '';
+    height: 1px;
+    left: 0;
+    top: 0;
+  }
+`
+
+export const LoadMoreButton = styled.button`
+  background-color: #774c9a;
+  border-radius: 100px;
+  cursor: pointer;
+  margin: 0 auto;
+  color: #ffffff;
+  padding: 16px;
+  border: none;
+  width: 100%;
 `

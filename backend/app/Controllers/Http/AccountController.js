@@ -20,7 +20,7 @@ class AccountController {
   async index({ request, response, auth }) {
     const user = await auth.getUser()
 
-    const { page, perPage } = request.get()
+    const { page = 1, perPage = 5 } = request.get()
 
     const paginationOfAccounts = await user
       .accounts()
