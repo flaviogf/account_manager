@@ -5,51 +5,47 @@ import {
   Container,
   Header,
   Input,
+  Content,
   Table,
-  ActionButton,
   Footer,
   LoadMoreButton
 } from './styles'
 
-function List({ accounts, page, setPage }) {
+import ListItem from '../ListItem'
+
+function List({ accounts, onEdit, onConfirmDelete, onCopy, onLoadMore }) {
   return (
     <Container>
       <Header>
         <Input placeholder="Search" />
       </Header>
 
-      <Table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Login</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {accounts.map((it) => (
-            <tr key={it.id}>
-              <td>{it.name}</td>
-              <td>{it.login}</td>
-              <td>
-                <ActionButton type="button">Edit</ActionButton>
-                <ActionButton type="button" danger>
-                  Delete
-                </ActionButton>
-                <ActionButton type="button" info>
-                  Copy
-                </ActionButton>
-              </td>
+      <Content>
+        <Table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Login</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+
+          <tbody>
+            {accounts.map((it) => (
+              <ListItem
+                key={it.id}
+                onEdit={onEdit}
+                onConfirmDelete={onConfirmDelete}
+                onCopy={onCopy}
+                account={it}
+              />
+            ))}
+          </tbody>
+        </Table>
+      </Content>
 
       <Footer>
-        <LoadMoreButton onClick={() => setPage(page + 1)}>
-          Load more..
-        </LoadMoreButton>
+        <LoadMoreButton onClick={onLoadMore}>Load more..</LoadMoreButton>
       </Footer>
     </Container>
   )
@@ -63,8 +59,10 @@ List.propTypes = {
       login: PropTypes.string.isRequired
     })
   ).isRequired,
-  page: PropTypes.number.isRequired,
-  setPage: PropTypes.func.isRequired
+  onEdit: PropTypes.func.isRequired,
+  onConfirmDelete: PropTypes.func.isRequired,
+  onCopy: PropTypes.func.isRequired,
+  onLoadMore: PropTypes.func.isRequired
 }
 
 export default List

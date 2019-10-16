@@ -5,8 +5,8 @@ export const Container = styled.div`
   background-color: #482e5d;
   border-radius: 2px;
   margin: 16px auto;
-  overflow-x: auto;
   max-width: 768px;
+  overflow: hidden;
   width: 100%;
 `
 
@@ -28,8 +28,12 @@ export const Input = styled.input`
   }
 `
 
+export const Content = styled.div`
+  overflow: auto;
+`
+
 export const Table = styled.table`
-  border-collapse: collapse;
+  margin: 8px 0 16px 0;
   width: 100%;
 
   th,
@@ -53,31 +57,6 @@ export const Table = styled.table`
   td:last-child {
     justify-content: space-around;
     display: flex;
-  }
-`
-
-export const ActionButton = styled.button`
-  background-color: ${(props) => {
-    if (props.danger) {
-      return '#ba4155'
-    }
-
-    if (props.info) {
-      return '#774c9a'
-    }
-
-    return '#2e9e83'
-  }};
-  border-radius: 3px;
-  margin-right: 5px;
-  cursor: pointer;
-  padding: 6px;
-  border: none;
-  color: white;
-  flex: 1;
-
-  &:last-child {
-    margin-right: 0px;
   }
 `
 

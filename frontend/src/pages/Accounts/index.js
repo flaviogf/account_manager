@@ -22,29 +22,13 @@ function Accounts() {
     }
 
     function loadAccounts(authorization) {
-      return api.get('/account', { headers: { authorization } })
-    }
-
-    getToken()
-      .then(loadAccounts)
-      .then((res) => res.data)
-      .then(setAccounts)
-      .catch(() => toast.error('Unable to load accounts.'))
-  }, [])
-
-  useEffect(() => {
-    function getToken() {
-      return session.getBearerToken()
-    }
-
-    function loadAccounts(authorization) {
       return api.get(`/account?page=${page}`, { headers: { authorization } })
     }
 
     getToken()
       .then(loadAccounts)
       .then((res) => res.data)
-      .then((moreAccounts) => setAccounts([...accounts, ...moreAccounts]))
+      .then((more) => setAccounts((current) => [...current, ...more]))
       .catch(() => toast.error('Unable to load accounts.'))
   }, [page])
 
@@ -61,35 +45,95 @@ function Accounts() {
       return api
         .post('/account', account, { headers: { authorization } })
         .then((res) => res.data)
-        .then((id) => [{ ...account, id }, ...accounts])
+        .then((id) => ({ id, ...account }))
+    }
+
+    function loadAccounts(account) {
+      if (page === 1) {
+        setAccounts([account, ...accounts.splice(0, 4)])
+        return
+      }
+
+      setAccounts([])
+      setPage(1)
+    }
+
+    function clearForm() {
+      setPassword('')
+      setLogin('')
+      setName('')
     }
 
     getToken()
       .then(storeAccount)
-      .then(setAccounts)
-      .then(() => setPassword(''))
-      .then(() => setLogin(''))
-      .then(() => setName(''))
+      .then(loadAccounts)
+      .then(clearForm)
       .then(() => toast.success('Successfully created account'))
       .catch(() => toast.error('Unable to create account.'))
+  }
+
+  function onEdit(account) {
+    setPassword(account.password)
+    setLogin(account.login)
+    setName(account.name)
+  }
+
+  function onConfirmDelete(account) {
+    function getToken() {
+      return session.getBearerToken()
+    }
+
+    function deleteAccount(authorization) {
+      return api
+        .delete(`/account/${account.id}`, { headers: { authorization } })
+        .then((res) => res.data)
+        .then(() => accounts.filter((it) => it.id !== account.id))
+    }
+
+    getToken()
+      .then(deleteAccount)
+      .then(setAccounts)
+      .then(() => toast.success('Successfully destroyed account'))
+      .catch(() => toast.error('Unable to destroy account.'))
+  }
+
+  function onCopy(account) {
+    function copyPasswordToClipboard() {
+      const el = document.createElement('textarea')
+      el.value = account.password
+      el.setAttribute('readonly', '')
+      el.style.position = 'absolute'
+      el.style.left = '-9999px'
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+    }
+
+    copyPasswordToClipboard()
+  }
+
+  function onLoadMore() {
+    setPage(page + 1)
   }
 
   return (
     <Container>
       <Form
-        onSubmit={onSubmit}
-        setPassword={setPassword}
-        setLogin={setLogin}
-        setName={setName}
         password={password}
         login={login}
         name={name}
+        setPassword={setPassword}
+        setLogin={setLogin}
+        setName={setName}
+        onSubmit={onSubmit}
       />
       <List
-        setAccounts={setAccounts}
         accounts={accounts}
-        setPage={setPage}
-        page={page}
+        onEdit={onEdit}
+        onConfirmDelete={onConfirmDelete}
+        onCopy={onCopy}
+        onLoadMore={onLoadMore}
       />
     </Container>
   )
