@@ -10,6 +10,7 @@ import api from '../../services/api'
 import session from '../../services/session'
 
 function Accounts() {
+  const [accountId, setAccountId] = useState(0)
   const [name, setName] = useState('')
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
@@ -42,15 +43,21 @@ function Accounts() {
     function storeAccount(authorization) {
       const account = { name, login, password }
 
-      return api
-        .post('/account', account, { headers: { authorization } })
+      const url = accountId ? `/account/${accountId}` : '/account'
+
+      const method = accountId ? 'put' : 'post'
+
+      return api[method](url, account, { headers: { authorization } })
         .then((res) => res.data)
         .then((id) => ({ id, ...account }))
     }
 
-    function loadAccounts(account) {
+    function reloadAccounts(account) {
       if (page === 1) {
-        setAccounts([account, ...accounts.splice(0, 4)])
+        setAccounts([
+          account,
+          ...accounts.filter((it) => it.id !== account.id).splice(0, 4)
+        ])
         return
       }
 
@@ -60,20 +67,29 @@ function Accounts() {
 
     function clearForm() {
       setPassword('')
+      setAccountId(0)
       setLogin('')
       setName('')
     }
 
     getToken()
       .then(storeAccount)
-      .then(loadAccounts)
+      .then(reloadAccounts)
       .then(clearForm)
-      .then(() => toast.success('Successfully created account'))
-      .catch(() => toast.error('Unable to create account.'))
+      .then(() => toast.success('Operation successfully performed.'))
+      .catch(() => toast.error('Unable to perform operation.'))
+  }
+
+  function onReset() {
+    setPassword('')
+    setAccountId(0)
+    setLogin('')
+    setName('')
   }
 
   function onEdit(account) {
     setPassword(account.password)
+    setAccountId(account.id)
     setLogin(account.login)
     setName(account.name)
   }
@@ -93,8 +109,8 @@ function Accounts() {
     getToken()
       .then(deleteAccount)
       .then(setAccounts)
-      .then(() => toast.success('Successfully destroyed account'))
-      .catch(() => toast.error('Unable to destroy account.'))
+      .then(() => toast.success('Operation successfully performed.'))
+      .catch(() => toast.error('Unable to perform operation.'))
   }
 
   function onCopy(account) {
@@ -127,6 +143,7 @@ function Accounts() {
         setLogin={setLogin}
         setName={setName}
         onSubmit={onSubmit}
+        onReset={onReset}
       />
       <List
         accounts={accounts}

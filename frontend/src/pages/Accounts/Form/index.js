@@ -14,6 +14,7 @@ import {
 
 function Form({
   onSubmit,
+  onReset,
   setPassword,
   setLogin,
   setName,
@@ -54,7 +55,10 @@ function Form({
       </Content>
 
       <Footer>
-        <Button type="submit">Save account</Button>
+        <Button type="button" info onClick={onReset}>
+          Reset
+        </Button>
+        <Button type="submit">Save</Button>
       </Footer>
     </Container>
   )
@@ -62,6 +66,7 @@ function Form({
 
 Form.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
   setPassword: PropTypes.func.isRequired,
   setLogin: PropTypes.func.isRequired,
   setName: PropTypes.func.isRequired,

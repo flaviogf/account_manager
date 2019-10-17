@@ -71,10 +71,18 @@ export const Input = styled.input`
 `
 
 export const Button = styled.button`
-  background-color: #25806a;
+  background-color: ${(props) => {
+    if (props.info) {
+      return '#774c9a'
+    }
+
+    return '#2e9e83'
+  }};
   border-radius: 100px;
   padding: 12px 16px;
   cursor: pointer;
   color: #ffffff;
+  margin: 0 5px;
   border: none;
+  width: 100px;
 `

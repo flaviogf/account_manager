@@ -6,19 +6,11 @@ import { Button } from './styles'
 function ListItem({ account, onEdit, onConfirmDelete, onCopy }) {
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false)
 
-  let timeout
-
   useEffect(() => {
-    return () => {
-      clearTimeout(timeout)
-    }
-  })
+    const timeout = setTimeout(() => setConfirmDeleteVisible(false), 1000)
 
-  function onDelete() {
-    setConfirmDeleteVisible(true)
-
-    timeout = setTimeout(() => setConfirmDeleteVisible(false), 1000)
-  }
+    return () => clearTimeout(timeout)
+  }, [confirmDeleteVisible])
 
   return (
     <tr>
@@ -30,7 +22,11 @@ function ListItem({ account, onEdit, onConfirmDelete, onCopy }) {
         </Button>
 
         {!confirmDeleteVisible && (
-          <Button type="button" onClick={() => onDelete()} warning>
+          <Button
+            type="button"
+            onClick={() => setConfirmDeleteVisible(true)}
+            warning
+          >
             Delete
           </Button>
         )}
