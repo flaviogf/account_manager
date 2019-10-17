@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
@@ -21,14 +21,6 @@ import session from '../../services/session'
 function Login({ history }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
-  useEffect(() => {
-    if (!session.isAuthenticated()) {
-      return
-    }
-
-    history.push('/accounts')
-  }, [history])
 
   function onSubmit(e) {
     e.preventDefault()
