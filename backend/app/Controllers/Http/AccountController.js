@@ -24,7 +24,7 @@ class AccountController {
 
     const paginationOfAccounts = await user
       .accounts()
-      .where('name', 'like', search ? `%${search.toLowerCase()}%` : '%')
+      .whereRaw(`LOWER(name) LIKE ?`, [`%${search}%`])
       .orderBy('created_at', 'desc')
       .paginate(page, perPage)
 
