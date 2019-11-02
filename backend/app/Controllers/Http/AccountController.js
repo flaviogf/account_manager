@@ -20,10 +20,11 @@ class AccountController {
   async index({ request, response, auth }) {
     const user = await auth.getUser()
 
-    const { page = 1, perPage = 5 } = request.get()
+    const { page = 1, perPage = 5, search = '' } = request.get()
 
     const paginationOfAccounts = await user
       .accounts()
+      .where('name', 'like', `%${search || ''}%`)
       .orderBy('created_at', 'desc')
       .paginate(page, perPage)
 

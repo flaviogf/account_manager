@@ -13,11 +13,28 @@ import {
 
 import ListItem from '../ListItem'
 
-function List({ accounts, onEdit, onConfirmDelete, onCopy, onLoadMore }) {
+function List({
+  accounts,
+  onSearch,
+  onEdit,
+  onConfirmDelete,
+  onCopy,
+  onLoadMore
+}) {
+  function debounce(delay, fn) {
+    let timeout = null
+
+    return (e) => {
+      if (timeout) clearTimeout(timeout)
+      timeout = setTimeout(() => fn(e), delay)
+      e.persist()
+    }
+  }
+
   return (
     <Container>
       <Header>
-        <Input placeholder="Search" />
+        <Input onChange={debounce(500, onSearch)} placeholder="Search" />
       </Header>
 
       <Content>
@@ -59,6 +76,7 @@ List.propTypes = {
       login: PropTypes.string.isRequired
     })
   ).isRequired,
+  onSearch: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
   onConfirmDelete: PropTypes.func.isRequired,
   onCopy: PropTypes.func.isRequired,

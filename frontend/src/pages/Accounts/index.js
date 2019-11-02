@@ -15,7 +15,7 @@ function Accounts() {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [accounts, setAccounts] = useState([])
-  const [page, setPage] = useState(1)
+  const [paginate, setPaginate] = useState({ page: 1, perPage: 5, search: '' })
 
   useEffect(() => {
     function getToken() {
@@ -23,7 +23,12 @@ function Accounts() {
     }
 
     function loadAccounts(authorization) {
-      return api.get(`/account?page=${page}`, { headers: { authorization } })
+      return api.get(
+        `/account?page=${paginate.page}&perPage=${paginate.perPage}&search=${paginate.search}`,
+        {
+          headers: { authorization }
+        }
+      )
     }
 
     getToken()
@@ -31,7 +36,7 @@ function Accounts() {
       .then((res) => res.data)
       .then((more) => setAccounts((current) => [...current, ...more]))
       .catch(() => toast.error('Unable to load accounts.'))
-  }, [page])
+  }, [paginate])
 
   function onSubmit(e) {
     e.preventDefault()
@@ -53,7 +58,7 @@ function Accounts() {
     }
 
     function reloadAccounts(account) {
-      if (page === 1) {
+      if (paginate.page === 1) {
         setAccounts([
           account,
           ...accounts.filter((it) => it.id !== account.id).splice(0, 4)
@@ -62,7 +67,11 @@ function Accounts() {
       }
 
       setAccounts([])
-      setPage(1)
+      setPaginate({
+        page: 1,
+        perPage: 5,
+        search: ''
+      })
     }
 
     function clearForm() {
@@ -85,6 +94,15 @@ function Accounts() {
     setAccountId(0)
     setLogin('')
     setName('')
+  }
+
+  function onSearch(e) {
+    setAccounts([])
+    setPaginate({
+      page: 1,
+      perPage: 5,
+      search: e.target.value
+    })
   }
 
   function onEdit(account) {
@@ -130,7 +148,11 @@ function Accounts() {
   }
 
   function onLoadMore() {
-    setPage(page + 1)
+    setPaginate({
+      page: paginate.page + 1,
+      perPage: 5,
+      search: paginate.search
+    })
   }
 
   return (
@@ -147,6 +169,7 @@ function Accounts() {
       />
       <List
         accounts={accounts}
+        onSearch={onSearch}
         onEdit={onEdit}
         onConfirmDelete={onConfirmDelete}
         onCopy={onCopy}
